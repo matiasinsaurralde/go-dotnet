@@ -49,6 +49,30 @@ func main() {
 }
 ```
 
+## Preparing your code
+
+I've used ```dmcs``` (from Mono) to generate an assembly file, the original code was something like:
+
+```
+using System;
+
+namespace HelloWorld {
+
+	public class HelloWorld {
+    	public static void Hello() {
+      	Console.WriteLine("Hello from .NET");
+    	}
+	}
+
+}
+```
+
+And the command:
+
+```
+dmcs -t:library HelloWorld.cs
+```
+
 ## Setup
 
 Coming soon!
@@ -57,6 +81,9 @@ Coming soon!
 
 * Run some benchmarks.
 * Add/enhance ```net/http``` samples, like [this](https://github.com/matiasinsaurralde/go-dotnet/blob/master/examples/http.go).
+* Provide useful callbacks.
+
+I'm open to PRs, suggestions, etc.
 
 ## License
 
