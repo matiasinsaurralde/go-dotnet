@@ -8,6 +8,9 @@ This is a PoC Go wrapper for the .NET Core Runtime, this project uses ```cgo``` 
 
 * Load a .dll, setup [delegates](http://www.fancy-development.net/hosting-net-core-clr-in-your-own-process) and call them from your Go functions.
 
+![Capture][capture]
+
+
 ## An example
 
 ```
@@ -92,3 +95,5 @@ I'm open to PRs, suggestions, etc.
 [license-url]: LICENSE
 
 [license-image]: http://img.shields.io/badge/license-MIT-blue.svg?style=flat
+
+[capture]: capture.png
