@@ -5,9 +5,6 @@ package dotnet
 #include <stdlib.h>
 #include "binding.hpp"
 
-static void abc() {
-};
-
 */
 import "C"
 
@@ -17,7 +14,11 @@ import (
 	"errors"
 	"strings"
 	"unsafe"
+
+	"fmt"
 )
+
+type TheFunction C.TheFunction
 
 type Runtime struct {
 	Params RuntimeParams
@@ -30,16 +31,17 @@ type RuntimeParams struct {
 	ManagedAssemblyAbsolutePath string
 }
 
+type Callback struct {
+	f *func()
+}
+
+var Callbacks map[int]Callback
+
 const DefaultAppDomainFriendlyName string = "app"
 
 func NewRuntime(params RuntimeParams) (err error, runtime Runtime) {
 	runtime = Runtime{Params: params}
-	// C.initializeCoreCLR()
-	// C.executeAssembly()
-
 	err = runtime.Init()
-
-	C.abc()
 
 	return err, runtime
 }
@@ -113,6 +115,35 @@ func (r *Runtime) ExecuteManagedAssembly(assembly string) (err error) {
 	return err
 }
 
-func (r *Runtime) CreateDelegate() {
-	C.createDelegate()
+func (r *Runtime) CreateDelegate(assemblyName string, typeName string, methodName string) func() {
+
+	// var err error
+
+	CAssemblyName := C.CString(assemblyName)
+	CTypeName := C.CString(typeName)
+	CMethodName := C.CString(methodName)
+
+	var result C.int
+
+	if result != 0 {
+		// err = errors.New("Can't create delegate")
+	}
+
+	return func() {
+		result = C.createDelegate(CAssemblyName, CTypeName, CMethodName, 1)
+	}
+}
+
+func RegisterCallback(f func()) int {
+	fmt.Println("Registering callback!", len(Callbacks))
+	var n = len(Callbacks)
+	// Callbacks[n] = Callback{&f}
+	callback := Callback{&f}
+
+	if Callbacks == nil {
+		Callbacks = make(map[int]Callback)
+	}
+
+	Callbacks[n] = callback
+	return n
 }
