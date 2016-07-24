@@ -47,6 +47,10 @@ func main() {
 }
 ```
 
+## Setup
+
+Coming soon!
+
 ## Ideas
 
 * Run some benchmarks.
