@@ -54,7 +54,7 @@ func main() {
 }
 ```
 
-## Preparing your code
+## Preparing your code (C#)
 
 I've used ```dmcs``` (from Mono) to generate an assembly file, the original code was something like:
 
@@ -77,6 +77,16 @@ And the command:
 ```
 dmcs -t:library HelloWorld.cs
 ```
+
+## Preparing your code (VisualBasic)
+
+I did a quick test with [this program](https://github.com/matiasinsaurralde/go-dotnet/blob/master/examples/HelloWorld.vb), using the VB.NET compiler from Mono:
+
+```
+vbnc -t:library HelloWorld.vb
+```
+
+I'm not sure about the status of [Roslyn](https://github.com/dotnet/roslyn) but it could be interesting to try it.
 
 ## Setup
 
