@@ -5,7 +5,13 @@ import (
 
 	"fmt"
 	"os"
+	"time"
 )
+
+//export the_callback
+func the_callback() {
+	fmt.Println("Hi, I'm the callback!")
+}
 
 func main() {
 	fmt.Println("This is main, I'll initialize the .NET runtime.")
@@ -30,7 +36,22 @@ func main() {
 
 	// runtime.ExecuteManagedAssembly("HelloWorldMain.exe")
 
-	runtime.CreateDelegate()
+	dotnet.RegisterCallback(func() {
+		fmt.Println("Hi, I'm the callback?")
+	})
+
+	SayHello := runtime.CreateDelegate("HelloWorld", "HelloWorld.HelloWorld", "Hello")
+
+	go func() {
+		for {
+			SayHello()
+			time.Sleep(1 * time.Second)
+		}
+	}()
+
+	for {
+
+	}
 
 	runtime.Shutdown()
 }
