@@ -28,7 +28,9 @@ func main() {
 
 	fmt.Println("Runtime loaded.")
 
-  runtime.ExecuteManagedAssembly("HelloWorldMain.exe")
+  // runtime.ExecuteManagedAssembly("HelloWorldMain.exe")
+
+  runtime.CreateDelegate()
 
   runtime.Shutdown()
 }
