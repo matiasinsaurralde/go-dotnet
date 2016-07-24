@@ -151,6 +151,19 @@ int executeManagedAssembly(const char *assembly) {
   return 0;
 };
 
+int createDelegate(const char* entryPointAssemblyName,
+            const char* entryPointTypeName,
+            const char* entryPointMethodName,
+            int delegateId
+            ) {
+  printf("createDelegate()\n");
+  TheFunction theFunction;
+  int st = create_delegate( hostHandle, domainId, entryPointAssemblyName, entryPointTypeName, entryPointMethodName, (void**) &theFunction);
+  theFunction();
+  // int st = 0;
+  return st;
+}
+
 void parseValues(const char* input, char** dest, int count) {
   std::stringstream values(input);
   std::string e;
@@ -166,9 +179,3 @@ void parseValues(const char* input, char** dest, int count) {
     i++;
   }
 };
-
-void createDelegate() {
-  printf("createDelegate()\n");
-  TheFunction theFunction;
-  int st = create_delegate( hostHandle, domainId, "HelloWorld", "HelloWorld.HelloWorld", "Hello", (void**) &theFunction);
-}
