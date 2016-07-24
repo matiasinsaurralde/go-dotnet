@@ -19,12 +19,12 @@ import (
 )
 
 func main() {
-	fmt.Println("This is main, I'll initialize the .NET runtime.")
+	fmt.Println("Hi, I'll initialize the .NET runtime.")
 
 	properties := map[string]string{
 		"TRUSTED_PLATFORM_ASSEMBLIES":   "",
-        "APP_PATHS":                     "/Users/matias/dev/dotnet/cdotnet/lib/HelloWorld",
-        "NATIVE_DLL_SEARCH_DIRECTORIES": "/Users/matias/dev/dotnet/cdotnet/lib/HelloWorld:/usr/local/share/dotnet/shared/Microsoft.NETCore.App/1.0.0",
+        "APP_PATHS":                     "/Users/matias/dotnet/HelloWorld",
+        "NATIVE_DLL_SEARCH_DIRECTORIES": "/Users/matias/dotnet/HelloWorld:/usr/local/share/dotnet/shared/Microsoft.NETCore.App/1.0.0",
 	}
 
 	err, runtime := dotnet.NewRuntime(dotnet.RuntimeParams{
