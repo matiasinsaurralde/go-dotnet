@@ -131,6 +131,26 @@ int shutdownCoreCLR() {
   return st;
 };
 
+int executeManagedAssembly(const char *assembly) {
+  printf("Executing: %s\n", assembly);
+
+  unsigned int* exitCode;
+  int st = execute_assembly(
+          hostHandle,
+          domainId,
+          0,
+          NULL,
+          assembly,
+          (unsigned int*)&exitCode);
+
+  printf("Exit code: %d\n", exitCode);
+
+  if (!SUCCEEDED(st)) {
+    return st;
+  };
+  return 0;
+};
+
 void parseValues(const char* input, char** dest, int count) {
   std::stringstream values(input);
   std::string e;
