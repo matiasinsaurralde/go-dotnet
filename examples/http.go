@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/matiasinsaurralde/go-dotnet"
 
-  "net/http"
+	"net/http"
 
 	"fmt"
 	"os"
@@ -36,13 +36,13 @@ func main() {
 
 	SayHello := runtime.CreateDelegate("HelloWorld", "HelloWorld.HelloWorld", "Hello")
 
-  http.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
-    fmt.Println("Calling delegate")
-    SayHello()
-    w.Write([]byte("???"))
-  })
+	http.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
+		fmt.Println("Calling delegate")
+		SayHello()
+		w.Write([]byte("???"))
+	})
 
-  http.ListenAndServe(":5000", nil)
+	http.ListenAndServe(":5000", nil)
 
 	runtime.Shutdown()
 }
