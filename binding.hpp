@@ -10,6 +10,7 @@ unsigned int domainId;
 
 extern "C" {
 #endif
+
 int initializeCoreCLR(const char* exePath,
             const char* appDomainFriendlyName,
             int propertyCount,
@@ -18,10 +19,15 @@ int initializeCoreCLR(const char* exePath,
             const char* managedAssemblyAbsolutePath,
             const char* clrFilesAbsolutePath);
 int shutdownCoreCLR();
-
 int executeManagedAssembly(const char*);
+void createDelegate();
+
 void parseValues(const char*, char**, int);
-void executeAssembly();
+
+#define __stdcall
+#define STDMETHODCALLTYPE __stdcall
+typedef void (STDMETHODCALLTYPE *TheFunction)();
+
 #ifdef __cplusplus
 }
 #endif

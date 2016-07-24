@@ -20,6 +20,7 @@ void* coreclrLib;
 coreclr_initialize_ptr initialize_core_clr;
 coreclr_execute_assembly_ptr execute_assembly;
 coreclr_shutdown_ptr shutdown_core_clr;
+coreclr_create_delegate_ptr create_delegate;
 
 int initializeCoreCLR(const char* exePath,
             const char* appDomainFriendlyName,
@@ -68,6 +69,7 @@ int initializeCoreCLR(const char* exePath,
       initialize_core_clr = (coreclr_initialize_ptr)dlsym(coreclrLib, "coreclr_initialize");
       execute_assembly = (coreclr_execute_assembly_ptr)dlsym(coreclrLib, "coreclr_execute_assembly");
       shutdown_core_clr= (coreclr_shutdown_ptr)dlsym(coreclrLib, "coreclr_shutdown");
+      create_delegate = (coreclr_create_delegate_ptr)dlsym(coreclrLib, "coreclr_create_delegate");
 
       if (initialize_core_clr == nullptr)
       {
@@ -165,6 +167,8 @@ void parseValues(const char* input, char** dest, int count) {
   }
 };
 
-void executeAssembly() {
-  printf("executeAssembly()\n");
+void createDelegate() {
+  printf("createDelegate()\n");
+  TheFunction theFunction;
+  int st = create_delegate( hostHandle, domainId, "HelloWorld", "HelloWorld.HelloWorld", "Hello", (void**) &theFunction);
 }
