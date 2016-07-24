@@ -105,10 +105,14 @@ func( r *Runtime) ExecuteManagedAssembly(assembly string) (err error) {
   CAssembly := C.CString(assembly)
   result = C.executeManagedAssembly(CAssembly)
   C.free(unsafe.Pointer(CAssembly))
-  
+
   if result == -1 {
     err = errors.New("Can't execute")
   }
 
   return err
+}
+
+func( r *Runtime) CreateDelegate() {
+  C.createDelegate()
 }
