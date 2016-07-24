@@ -18,6 +18,8 @@ int initializeCoreCLR(const char* exePath,
             const char* managedAssemblyAbsolutePath,
             const char* clrFilesAbsolutePath);
 int shutdownCoreCLR();
+
+int executeManagedAssembly(const char*);
 void parseValues(const char*, char**, int);
 void executeAssembly();
 #ifdef __cplusplus
