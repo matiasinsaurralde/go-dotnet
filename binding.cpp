@@ -143,8 +143,6 @@ int executeManagedAssembly(const char *assembly) {
           assembly,
           (unsigned int*)&exitCode);
 
-  printf("Exit code: %d\n", exitCode);
-
   if (!SUCCEEDED(st)) {
     return st;
   };
