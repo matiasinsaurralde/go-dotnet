@@ -20,7 +20,9 @@ int initializeCoreCLR(const char* exePath,
             const char* clrFilesAbsolutePath);
 int shutdownCoreCLR();
 int executeManagedAssembly(const char*);
-void createDelegate();
+int createDelegate(const char* entryPointAssemblyName,
+            const char* entryPointTypeName,
+            const char* entryPointMethodName, int delegateId);
 
 void parseValues(const char*, char**, int);
 
