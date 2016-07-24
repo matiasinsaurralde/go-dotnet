@@ -15,8 +15,8 @@ import(
   "github.com/kardianos/osext"
 
   "unsafe"
+  "errors"
   "strings"
-  "fmt"
 )
 
 type Runtime struct {
@@ -27,6 +27,7 @@ type RuntimeParams struct {
   ExePath string
   AppDomainFriendlyName string
   Properties map[string]string
+  ManagedAssemblyAbsolutePath string
 }
 
 const DefaultAppDomainFriendlyName string = "app"
@@ -53,10 +54,6 @@ func( r *Runtime ) Init() (err error) {
 
   propertyCount := len(r.Params.Properties)
 
-  fmt.Println("ExePath = ", r.Params.ExePath)
-  fmt.Println("AppDomainFriendlyName = ", r.Params.AppDomainFriendlyName)
-  fmt.Println("PropertyCount = ", propertyCount)
-
   propertyKeys := make([]string, 0, len(r.Params.Properties))
   propertyValues := make([]string, 0, len(r.Params.Properties))
 
@@ -68,15 +65,37 @@ func( r *Runtime ) Init() (err error) {
   ExePath := C.CString(r.Params.ExePath)
   AppDomainFriendlyName := C.CString(r.Params.AppDomainFriendlyName)
   PropertyCount := C.int(propertyCount)
-  PropertyKeys := C.CString(strings.Join(propertyKeys, ":"))
-  PropertyValues := C.CString(strings.Join(propertyValues, ":"))
+  PropertyKeys := C.CString(strings.Join(propertyKeys, ";"))
+  PropertyValues := C.CString(strings.Join(propertyValues, ";"))
 
-  C.initializeCoreCLR(ExePath, AppDomainFriendlyName, PropertyCount, PropertyKeys, PropertyValues)
+  CLRFilesAbsolutePath := C.CString("/usr/local/share/dotnet/shared/Microsoft.NETCore.App/1.0.0")
+
+  ManagedAssemblyAbsolutePath := C.CString(r.Params.ManagedAssemblyAbsolutePath)
+
+  var result C.int
+  result = C.initializeCoreCLR(ExePath, AppDomainFriendlyName, PropertyCount, PropertyKeys, PropertyValues, ManagedAssemblyAbsolutePath, CLRFilesAbsolutePath)
+
+  if result == -1 {
+    err = errors.New("Runtime error")
+  }
 
   C.free(unsafe.Pointer(ExePath))
   C.free(unsafe.Pointer(AppDomainFriendlyName))
   C.free(unsafe.Pointer(PropertyKeys))
   C.free(unsafe.Pointer(PropertyValues))
+  C.free(unsafe.Pointer(ManagedAssemblyAbsolutePath))
+  C.free(unsafe.Pointer(CLRFilesAbsolutePath))
+
+  return err
+}
+
+func( r *Runtime ) Shutdown() (err error) {
+  var result C.int
+  result = C.shutdownCoreCLR()
+
+  if result == -1 {
+    err = errors.New("Shutdown error.")
+  }
 
   return err
 }
