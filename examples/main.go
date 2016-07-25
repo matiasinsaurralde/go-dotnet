@@ -16,9 +16,10 @@ func main() {
 		"NATIVE_DLL_SEARCH_DIRECTORIES": "/Users/matias/dev/dotnet/cdotnet/lib/HelloWorld:/usr/local/share/dotnet/shared/Microsoft.NETCore.App/1.0.0",
 	}
 
-	err, runtime := dotnet.NewRuntime(dotnet.RuntimeParams{
+	runtime, err := dotnet.NewRuntime(dotnet.RuntimeParams{
 		Properties:                  properties,
 	})
+	defer runtime.Shutdown()
 
 	if err != nil {
 		fmt.Println("Something bad happened! :(")
@@ -31,6 +32,4 @@ func main() {
 
 	SayHello := runtime.CreateDelegate("HelloWorld", "HelloWorld.HelloWorld", "Hello")
 	SayHello()
-
-	runtime.Shutdown()
 }
