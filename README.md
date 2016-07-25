@@ -35,7 +35,7 @@ func main() {
         "NATIVE_DLL_SEARCH_DIRECTORIES": "/Users/matias/dotnet/HelloWorld:/usr/local/share/dotnet/shared/Microsoft.NETCore.App/1.0.0",
 	}
 
-	err, runtime := dotnet.NewRuntime(dotnet.RuntimeParams{
+	runtime, err := dotnet.NewRuntime(dotnet.RuntimeParams{
 		Properties:                  properties,
 	})
 	defer runtime.Shutdown()
