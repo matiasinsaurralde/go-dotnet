@@ -39,11 +39,11 @@ var Callbacks map[int]Callback
 
 const DefaultAppDomainFriendlyName string = "app"
 
-func NewRuntime(params RuntimeParams) (err error, runtime Runtime) {
+func NewRuntime(params RuntimeParams) (runtime Runtime, err error) {
 	runtime = Runtime{Params: params}
 	err = runtime.Init()
 
-	return err, runtime
+	return runtime, err
 }
 
 func (r *Runtime) Init() (err error) {
