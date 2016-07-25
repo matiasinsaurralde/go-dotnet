@@ -9,7 +9,7 @@ This is a PoC Go wrapper for the .NET Core Runtime, this project uses ```cgo``` 
 
 * Load a .dll, setup [delegates](http://www.fancy-development.net/hosting-net-core-clr-in-your-own-process) and call them from your Go functions.
 
-I've tried calling both C# and VB.NET classes, of course you need to generate the assembly first, check below for more details!
+I've tried calling both C# and VB.NET methods, of course you need to generate the assembly first, check below for more details!
 
 ![Capture][capture]
 
