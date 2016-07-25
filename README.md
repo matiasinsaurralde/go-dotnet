@@ -15,7 +15,7 @@ I've tried calling both C# and VB.NET classes, of course you need to generate th
 
 ## An example
 
-```
+```go
 package main
 
 import (
@@ -58,7 +58,7 @@ func main() {
 
 I've used ```dmcs``` (from Mono) to generate an assembly file, the original code was something like:
 
-```
+```c#
 using System;
 
 namespace HelloWorld {
