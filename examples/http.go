@@ -28,6 +28,7 @@ func main() {
 		Properties:                  properties,
 		ManagedAssemblyAbsolutePath: "HelloWorldMain.Exe",
 	})
+	defer runtime.Shutdown()
 
 	if err != nil {
 		fmt.Println("Something bad happened! :(")
@@ -43,6 +44,4 @@ func main() {
 	})
 
 	http.ListenAndServe(":5000", nil)
-
-	runtime.Shutdown()
 }
