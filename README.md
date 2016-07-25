@@ -38,6 +38,7 @@ func main() {
 	err, runtime := dotnet.NewRuntime(dotnet.RuntimeParams{
 		Properties:                  properties,
 	})
+	defer runtime.Shutdown()
 
 	if err != nil {
 		fmt.Println("Something bad happened! :(")
@@ -50,8 +51,6 @@ func main() {
 
     // this will call HelloWorld.HelloWorld.Hello :)
 	SayHello()
-
-	runtime.Shutdown()
 }
 ```
 

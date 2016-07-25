@@ -26,6 +26,7 @@ func main() {
 		Properties:                  properties,
 		ManagedAssemblyAbsolutePath: "HelloWorldMain.Exe",
 	})
+	defer runtime.Shutdown()
 
 	if err != nil {
 		fmt.Println("Something bad happened! :(")
@@ -52,6 +53,4 @@ func main() {
 	for {
 
 	}
-
-	runtime.Shutdown()
 }
