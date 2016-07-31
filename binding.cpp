@@ -95,11 +95,39 @@ int initializeCoreCLR(const char* exePath,
 
         useServerGc = std::strcmp(useServerGc, "1") == 0 ? "true" : "false";
 
+        // Keep enough space for inserting the tpaList:
+        propertyCount++;
+
         char *keys[propertyCount];
         char *values[propertyCount];
 
         parseValues(mergedPropertyKeys, keys, propertyCount);
         parseValues(mergedPropertyValues, values, propertyCount);
+
+        bool tpaOverride = false;
+
+        const char *tpaKey = "TRUSTED_PLATFORM_ASSEMBLIES";
+
+        for( int i = 0; i < propertyCount ; i++ ) {
+          int match = strncmp( tpaKey, keys[i], strlen(tpaKey) );
+          if( match == 0 ) {
+            tpaOverride = true;
+            break;
+          }
+        };
+
+        if( !tpaOverride ) {
+          int newIndex = propertyCount;
+          keys[propertyCount] = (char*)std::malloc(strlen(tpaKey)+1);
+          std::strcpy(keys[propertyCount], tpaKey);
+
+          values[propertyCount] = (char*)std::malloc(strlen(tpaList.c_str())+1);
+          std::strcpy(values[propertyCount], tpaList.c_str());
+
+          propertyCount++;
+        };
+
+        free(&tpaKey);
 
         int st = initialize_core_clr(
                     exePath,
