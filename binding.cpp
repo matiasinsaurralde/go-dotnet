@@ -4,6 +4,7 @@
 #include <dlfcn.h>
 #include <limits.h>
 #include <string>
+#include <cstring>
 
 #include <stdio.h>
 #include <string.h>
