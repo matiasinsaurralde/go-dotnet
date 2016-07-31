@@ -45,6 +45,15 @@ func main() {
 
 	// runtime.ExecuteManagedAssembly("HelloWorldMain.exe")
 
-	SayHello := runtime.CreateDelegate("HelloWorld", "HelloWorld.HelloWorld", "Hello")
-	SayHello()
+	// SayHello := runtime.CreateDelegate("HelloWorld", "HelloWorld.HelloWorld", "Hello")
+	// SayHello()
+
+	// ReturnHelloString := runtime.CreateDelegate("HelloWorld", "HelloWorld.HelloWorld", "ReturnHelloString")
+	// ReturnHelloString()
+
+	EchoInt := runtime.CreateDelegate("HelloWorld", "HelloWorld.HelloWorld", "EchoInt")
+	EchoInt(2)
+
+	EchoAnotherInt := runtime.CreateDelegate("HelloWorld", "HelloWorld.HelloWorld", "EchoAnotherInt")
+	EchoAnotherInt(4)
 }
