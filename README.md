@@ -101,6 +101,7 @@ Coming soon!
 * Run some benchmarks.
 * Add/enhance ```net/http``` samples, like [this](https://github.com/matiasinsaurralde/go-dotnet/blob/master/examples/http.go).
 * Provide useful callbacks.
+* Test Linux support (in progress).
 
 I'm open to PRs, suggestions, etc.
 
