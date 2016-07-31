@@ -17,7 +17,7 @@ func main() {
 	properties := map[string]string{
 		// "TRUSTED_PLATFORM_ASSEMBLIES": "/usr/local/share/dotnet/shared/Microsoft.NETCore.App/1.0.0/mscorlib.ni.dll:/usr/local/share/dotnet/shared/Microsoft.NETCore.App/1.0.0/System.Private.CoreLib.ni.dll",
 		"APP_PATHS":                     "/Users/matias/dev/dotnet/cdotnet/lib/HelloWorld",
-		"NATIVE_DLL_SEARCH_DIRECTORIES": "/Users/matias/dev/dotnet/cdotnet/lib/HelloWorld:/usr/local/share/dotnet/shared/Microsoft.NETCore.App/1.0.0",
+		"NATIVE_DLL_SEARCH_DIRECTORIES": "/Users/matias/dev/dotnet/cdotnet/lib/HelloWorld",
 	}
 
 	runtime, err := dotnet.NewRuntime(dotnet.RuntimeParams{
@@ -27,6 +27,7 @@ func main() {
 
 	if err != nil {
 		fmt.Println("Something bad happened! :(")
+		fmt.Println(err)
 		os.Exit(1)
 	}
 
