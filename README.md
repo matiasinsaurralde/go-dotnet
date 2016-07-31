@@ -115,7 +115,7 @@ Coming soon!
 * Provide useful callbacks.
 * Test Linux support (in progress).
 
-I'm open to PRs, suggestions, etc.
+I'm open to PRs, Go/.NET swag, suggestions, etc.
 
 ## License
 
