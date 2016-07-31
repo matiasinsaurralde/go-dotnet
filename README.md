@@ -11,6 +11,8 @@ This is a PoC Go wrapper for the .NET Core Runtime, this project uses ```cgo``` 
 
 I've tried calling both C# and VB.NET methods, of course you need to generate the assembly first, check below for more details!
 
+**Note: After some tweaks it seems to work fine under Linux! Remember to install the SDK first :)**
+
 ![Capture][capture]
 
 
