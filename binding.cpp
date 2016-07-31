@@ -128,8 +128,6 @@ int initializeCoreCLR(const char* exePath,
           propertyCount++;
         };
 
-        free(&tpaKey);
-
         int st = initialize_core_clr(
                     exePath,
                     appDomainFriendlyName,
@@ -204,7 +202,6 @@ void parseValues(const char* input, char** dest, int count) {
     const char *v = e.c_str();
     dest[i] = (char*)std::malloc(strlen(v)+1);
     std::strcpy(dest[i], v);
-    free(&v);
     i++;
   }
 };
