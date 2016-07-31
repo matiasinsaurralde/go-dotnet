@@ -92,7 +92,6 @@ func (r *Runtime) Init() (err error) {
 	if r.Params.CLRFilesAbsolutePath == "" {
 		// Test for common SDK paths, return err if they don't exist?
 		for _, p := range CLRCommonPaths {
-			fmt.Println("Ranging CLRCommonPaths:", p)
 			_, err := os.Stat(p)
 			if err == nil {
 				CLRFilesAbsolutePath = p
