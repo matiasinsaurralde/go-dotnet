@@ -27,6 +27,7 @@ type Runtime struct {
 	Params RuntimeParams
 }
 
+// Hold CLR initialization parameters
 type RuntimeParams struct {
 	ExePath                     string
 	AppDomainFriendlyName       string
@@ -44,6 +45,7 @@ var Callbacks map[int]Callback
 
 const DefaultAppDomainFriendlyName string = "app"
 
+// Creates a new runtime.
 func NewRuntime(params RuntimeParams) (runtime Runtime, err error) {
 	runtime = Runtime{Params: params}
 	err = runtime.Init()
@@ -51,6 +53,8 @@ func NewRuntime(params RuntimeParams) (runtime Runtime, err error) {
 	return runtime, err
 }
 
+// Runtime initialization
+// This function sets a few default values to make everything easier.
 func (r *Runtime) Init() (err error) {
 	if r.Params.ExePath == "" {
 		r.Params.ExePath, err = osext.Executable()
@@ -60,6 +64,7 @@ func (r *Runtime) Init() (err error) {
 		r.Params.AppDomainFriendlyName = DefaultAppDomainFriendlyName
 	}
 
+	// In case you don't set APP_PATHS/NATIVE_DLL_SEARCH_DIRECTORIES, the package assumes your assemblies are in the same directory.
 	if r.Params.Properties["APP_PATHS"] == "" && r.Params.Properties["NATIVE_DLL_SEARCH_DIRECTORIES"] == "" {
 		executableFolder, _ := osext.ExecutableFolder()
 		r.Params.Properties["APP_PATHS"] = executableFolder
@@ -84,13 +89,14 @@ func (r *Runtime) Init() (err error) {
 
 	var CLRFilesAbsolutePath string
 
+	// CLRCommonPaths holds possible SDK locations
 	var CLRCommonPaths []string = []string{
 		"/usr/local/share/dotnet/shared/Microsoft.NETCore.App/1.0.0",
 		"/usr/share/dotnet/shared/Microsoft.NETCore.App/1.0.0",
 	}
 
+	// Test for common SDK paths, return err if they don't exist
 	if r.Params.CLRFilesAbsolutePath == "" {
-		// Test for common SDK paths, return err if they don't exist?
 		for _, p := range CLRCommonPaths {
 			_, err := os.Stat(p)
 			if err == nil {
@@ -111,6 +117,7 @@ func (r *Runtime) Init() (err error) {
 
 	ManagedAssemblyAbsolutePath := C.CString(r.Params.ManagedAssemblyAbsolutePath)
 
+	// Call the binding
 	var result C.int
 	result = C.initializeCoreCLR(ExePath, AppDomainFriendlyName, PropertyCount, PropertyKeys, PropertyValues, ManagedAssemblyAbsolutePath, CLRFilesAbsolutePathC)
 
@@ -128,6 +135,11 @@ func (r *Runtime) Init() (err error) {
 	return err
 }
 
+// Unloads the current app
+// Reference:
+//
+//	https://github.com/dotnet/coreclr/blob/d81d773312dcae24d0b5d56cb972bf71e22f856c/src/dlls/mscoree/unixinterface.cpp#L281
+//
 func (r *Runtime) Shutdown() (err error) {
 	var result C.int
 	result = C.shutdownCoreCLR()
@@ -139,6 +151,7 @@ func (r *Runtime) Shutdown() (err error) {
 	return err
 }
 
+// Loads an assembly file and call the default entrypoint.
 func (r *Runtime) ExecuteManagedAssembly(assembly string) (err error) {
 	var result C.int
 	CAssembly := C.CString(assembly)
@@ -152,6 +165,7 @@ func (r *Runtime) ExecuteManagedAssembly(assembly string) (err error) {
 	return err
 }
 
+// Makes it possible to call .NET stuff from Go.
 func (r *Runtime) CreateDelegate(assemblyName string, typeName string, methodName string) func() {
 
 	// var err error
