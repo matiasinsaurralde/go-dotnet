@@ -55,8 +55,15 @@ func (r *Runtime) Init() (err error) {
 	if r.Params.ExePath == "" {
 		r.Params.ExePath, err = osext.Executable()
 	}
+
 	if r.Params.AppDomainFriendlyName == "" {
 		r.Params.AppDomainFriendlyName = DefaultAppDomainFriendlyName
+	}
+
+	if r.Params.Properties["APP_PATHS"] == "" && r.Params.Properties["NATIVE_DLL_SEARCH_DIRECTORIES"] == "" {
+		executableFolder, _ := osext.ExecutableFolder()
+		r.Params.Properties["APP_PATHS"] = executableFolder
+		r.Params.Properties["NATIVE_DLL_SEARCH_DIRECTORIES"] = executableFolder
 	}
 
 	propertyCount := len(r.Params.Properties)
