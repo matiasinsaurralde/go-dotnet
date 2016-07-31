@@ -29,10 +29,14 @@ import (
 func main() {
 	fmt.Println("Hi, I'll initialize the .NET runtime.")
 
+	/*
+		If you don't set the TRUSTED_PLATFORM_ASSEMBLIES, it will use the default tpaList value.
+	*/
+
 	properties := map[string]string{
-		"TRUSTED_PLATFORM_ASSEMBLIES":   "",
-        "APP_PATHS":                     "/Users/matias/dotnet/HelloWorld",
-        "NATIVE_DLL_SEARCH_DIRECTORIES": "/Users/matias/dotnet/HelloWorld:/usr/local/share/dotnet/shared/Microsoft.NETCore.App/1.0.0",
+		// "TRUSTED_PLATFORM_ASSEMBLIES": "/usr/local/share/dotnet/shared/Microsoft.NETCore.App/1.0.0/mscorlib.ni.dll:/usr/local/share/dotnet/shared/Microsoft.NETCore.App/1.0.0/System.Private.CoreLib.ni.dll",
+		"APP_PATHS":                     "/Users/matias/dotnet/HelloWorld",
+		"NATIVE_DLL_SEARCH_DIRECTORIES": "/Users/matias/dotnet/HelloWorld:/usr/local/share/dotnet/shared/Microsoft.NETCore.App/1.0.0",
 	}
 
 	runtime, err := dotnet.NewRuntime(dotnet.RuntimeParams{
