@@ -8,5 +8,4 @@
 //
 //    https://msdn.microsoft.com/en-us/library/ms404385(v=vs.110).aspx
 //
-
 package dotnet
