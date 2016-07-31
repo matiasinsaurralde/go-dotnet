@@ -118,7 +118,6 @@ int initializeCoreCLR(const char* exePath,
         };
 
         if( !tpaOverride ) {
-          int newIndex = propertyCount;
           keys[propertyCount] = (char*)std::malloc(strlen(tpaKey)+1);
           std::strcpy(keys[propertyCount], tpaKey);
 
@@ -194,8 +193,6 @@ int createDelegate(const char* entryPointAssemblyName,
 void parseValues(const char* input, char** dest, int count) {
   std::stringstream values(input);
   std::string e;
-
-  const char *output[count];
 
   int i = 0;
   while( std::getline(values, e, ';')) {
