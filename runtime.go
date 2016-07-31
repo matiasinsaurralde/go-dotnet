@@ -16,6 +16,7 @@ import (
 	"errors"
 	"strings"
 	"unsafe"
+	"os"
 
 	"fmt"
 )
@@ -31,6 +32,8 @@ type RuntimeParams struct {
 	AppDomainFriendlyName       string
 	Properties                  map[string]string
 	ManagedAssemblyAbsolutePath string
+
+	CLRFilesAbsolutePath	string
 }
 
 type Callback struct {
@@ -72,12 +75,38 @@ func (r *Runtime) Init() (err error) {
 	PropertyKeys := C.CString(strings.Join(propertyKeys, ";"))
 	PropertyValues := C.CString(strings.Join(propertyValues, ";"))
 
-	CLRFilesAbsolutePath := C.CString("/usr/local/share/dotnet/shared/Microsoft.NETCore.App/1.0.0")
+	var CLRFilesAbsolutePath string
+
+	var CLRCommonPaths []string = []string{
+		"/usr/local/share/dotnet/shared/Microsoft.NETCore.App/1.0.0",
+		"/usr/share/dotnet/shared/Microsoft.NETCore.App/1.0.0",
+	}
+
+	if r.Params.CLRFilesAbsolutePath == "" {
+		// Test for common SDK paths, return err if they don't exist?
+		for _, p := range CLRCommonPaths {
+			fmt.Println("Ranging CLRCommonPaths:", p)
+			_, err := os.Stat(p)
+			if err == nil {
+				CLRFilesAbsolutePath = p
+				break
+			}
+		}
+
+		if CLRFilesAbsolutePath == "" {
+			err = errors.New("No SDK found")
+			return err
+		}
+	} else {
+		CLRFilesAbsolutePath = r.Params.CLRFilesAbsolutePath
+	}
+
+	CLRFilesAbsolutePathC := C.CString(CLRFilesAbsolutePath)
 
 	ManagedAssemblyAbsolutePath := C.CString(r.Params.ManagedAssemblyAbsolutePath)
 
 	var result C.int
-	result = C.initializeCoreCLR(ExePath, AppDomainFriendlyName, PropertyCount, PropertyKeys, PropertyValues, ManagedAssemblyAbsolutePath, CLRFilesAbsolutePath)
+	result = C.initializeCoreCLR(ExePath, AppDomainFriendlyName, PropertyCount, PropertyKeys, PropertyValues, ManagedAssemblyAbsolutePath, CLRFilesAbsolutePathC)
 
 	if result == -1 {
 		err = errors.New("Runtime error")
@@ -88,7 +117,7 @@ func (r *Runtime) Init() (err error) {
 	C.free(unsafe.Pointer(PropertyKeys))
 	C.free(unsafe.Pointer(PropertyValues))
 	C.free(unsafe.Pointer(ManagedAssemblyAbsolutePath))
-	C.free(unsafe.Pointer(CLRFilesAbsolutePath))
+	C.free(unsafe.Pointer(CLRFilesAbsolutePathC))
 
 	return err
 }
