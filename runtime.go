@@ -1,6 +1,7 @@
 package dotnet
 
 /*
+#cgo CXXFLAGS: -std=c++11 -Wall -pedantic
 #include <stdio.h>
 #include <stdlib.h>
 #include "binding.hpp"
