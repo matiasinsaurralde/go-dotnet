@@ -136,7 +136,6 @@ func (r *Runtime) Init() (err error) {
 }
 
 // Unloads the current app
-// Reference:
 //
 //	https://github.com/dotnet/coreclr/blob/d81d773312dcae24d0b5d56cb972bf71e22f856c/src/dlls/mscoree/unixinterface.cpp#L281
 //
