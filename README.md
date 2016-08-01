@@ -113,7 +113,7 @@ Coming soon!
 * Run some benchmarks.
 * Add/enhance ```net/http``` samples, like [this](https://github.com/matiasinsaurralde/go-dotnet/blob/master/examples/http.go).
 * Provide useful callbacks.
-* Test Linux support (in progress).
+* Support blittable types.
 
 I'm open to PRs, Go/.NET swag, suggestions, etc.
 
