@@ -115,6 +115,7 @@ Coming soon!
 * Provide useful callbacks.
 * Support blittable types.
 * CSharpScript support.
+* **Add tests.**
 
 I'm open to PRs, Go/.NET swag, suggestions, etc.
 
