@@ -114,6 +114,7 @@ Coming soon!
 * Add/enhance ```net/http``` samples, like [this](https://github.com/matiasinsaurralde/go-dotnet/blob/master/examples/http.go).
 * Provide useful callbacks.
 * Support blittable types.
+* CSharpScript support.
 
 I'm open to PRs, Go/.NET swag, suggestions, etc.
 
