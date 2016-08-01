@@ -7,7 +7,7 @@ package dotnet
 import "C"
 
 import(
-  "fmt"
+  // "fmt"
   "unsafe"
 )
 
