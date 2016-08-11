@@ -32,5 +32,7 @@ func main() {
     for _, f := range returnFields {
       fmt.Println(  "    ", f )
     }
+
+    fmt.Println("")
   }
 }
