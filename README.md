@@ -115,7 +115,7 @@ Coming soon!
 * Provide useful callbacks.
 * Support blittable types.
 * CSharpScript support.
-* Code generation tool (with `go generate`).
+* Code generation tool (with `go generate`), a few notes [here](https://github.com/matiasinsaurralde/go-dotnet/blob/master/code_generation.md).
 * **Add tests.**
 
 I'm open to PRs, Go/.NET swag, suggestions, etc.
