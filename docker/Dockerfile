@@ -15,6 +15,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 			ncurses-dev \
 			libtolua-dev \
 			exuberant-ctags \
+			mono-vbnc \
+			mono-dmcs \
 	&& rm -rf /var/lib/apt/lists/*                                          \
   && curl -fsSL "$GOLANG_DOWNLOAD_URL" -o golang.tar.gz                   \
 	&& echo "$GOLANG_DOWNLOAD_SHA256  golang.tar.gz" | sha256sum -c -       \
