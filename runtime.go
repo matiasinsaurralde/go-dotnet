@@ -14,9 +14,9 @@ import (
 	"github.com/kardianos/osext"
 
 	"errors"
+	"os"
 	"strings"
 	"unsafe"
-	"os"
 
 	"fmt"
 )
@@ -27,14 +27,14 @@ type Runtime struct {
 	Params RuntimeParams
 }
 
-// Hold CLR initialization parameters
+// RuntimeParams holds the CLR initialization parameters
 type RuntimeParams struct {
 	ExePath                     string
 	AppDomainFriendlyName       string
 	Properties                  map[string]string
 	ManagedAssemblyAbsolutePath string
 
-	CLRFilesAbsolutePath	string
+	CLRFilesAbsolutePath string
 }
 
 type Callback struct {
@@ -45,7 +45,7 @@ var Callbacks map[int]Callback
 
 const DefaultAppDomainFriendlyName string = "app"
 
-// Creates a new runtime.
+// NewRuntime creates a new runtime data structure.
 func NewRuntime(params RuntimeParams) (runtime Runtime, err error) {
 	runtime = Runtime{Params: params}
 	err = runtime.Init()
@@ -53,7 +53,7 @@ func NewRuntime(params RuntimeParams) (runtime Runtime, err error) {
 	return runtime, err
 }
 
-// Runtime initialization
+// Init performs the runtime initialization
 // This function sets a few default values to make everything easier.
 func (r *Runtime) Init() (err error) {
 	if r.Params.ExePath == "" {
@@ -90,7 +90,7 @@ func (r *Runtime) Init() (err error) {
 	var CLRFilesAbsolutePath string
 
 	// CLRCommonPaths holds possible SDK locations
-	var CLRCommonPaths []string = []string{
+	var CLRCommonPaths = []string{
 		"/usr/local/share/dotnet/shared/Microsoft.NETCore.App/1.0.0",
 		"/usr/share/dotnet/shared/Microsoft.NETCore.App/1.0.0",
 	}
@@ -98,7 +98,7 @@ func (r *Runtime) Init() (err error) {
 	// Test for common SDK paths, return err if they don't exist
 	if r.Params.CLRFilesAbsolutePath == "" {
 		for _, p := range CLRCommonPaths {
-			_, err := os.Stat(p)
+			_, err = os.Stat(p)
 			if err == nil {
 				CLRFilesAbsolutePath = p
 				break
@@ -135,7 +135,7 @@ func (r *Runtime) Init() (err error) {
 	return err
 }
 
-// Unloads the current app
+// Shutdown unloads the current app
 //
 //	https://github.com/dotnet/coreclr/blob/d81d773312dcae24d0b5d56cb972bf71e22f856c/src/dlls/mscoree/unixinterface.cpp#L281
 //
@@ -144,13 +144,13 @@ func (r *Runtime) Shutdown() (err error) {
 	result = C.shutdownCoreCLR()
 
 	if result == -1 {
-		err = errors.New("Shutdown error.")
+		err = errors.New("Shutdown error")
 	}
 
 	return err
 }
 
-// Loads an assembly file and call the default entrypoint.
+// ExecuteManagedAssembly loads an assembly file and call the default entrypoint.
 func (r *Runtime) ExecuteManagedAssembly(assembly string) (err error) {
 	var result C.int
 	CAssembly := C.CString(assembly)
@@ -164,7 +164,7 @@ func (r *Runtime) ExecuteManagedAssembly(assembly string) (err error) {
 	return err
 }
 
-// Makes it possible to call .NET stuff from Go.
+// CreateDelegate makes it possible to call .NET stuff from Go.
 func (r *Runtime) CreateDelegate(assemblyName string, typeName string, methodName string) func() {
 
 	// var err error
