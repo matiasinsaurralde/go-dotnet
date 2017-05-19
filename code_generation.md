@@ -50,7 +50,7 @@ func CreateDelegateReturn( delegateName string ) func(args... interface{}) inter
 }
 ```
 
-After delegate setup, we'll need to make a heavy use of `interface{}` and type checks, when passing arguments or retrieving return values from .NET. So I've been thinking that a code generator could make this better, so you write some functions and prefix them with line comments containing the required delegate information (namespace/name, arguments, return data type).
+After the delegates setup, we'll need to make a heavy use of `interface{}` and type checks, when passing arguments or retrieving return values from .NET. I've been thinking that a code generator could solve this in a better way: you write some functions and prefix them with line comments containing the required delegate information (namespace/name, arguments, return data type).
 
 ```go
 package mybinding
