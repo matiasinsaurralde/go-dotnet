@@ -1,4 +1,4 @@
-package mybinding
+package dotnet
 
 /*
 #cgo CXXFLAGS: -std=c++11 -Wall
@@ -35,7 +35,7 @@ type RuntimeParams struct {
 	CLRFilesAbsolutePath string
 }
 
-const DefaultAppDomainFriendlyName string = "app"
+const defaultAppDomainFriendlyName string = "app"
 
 // Init performs the runtime initialization
 // This function sets a few default values to make everything easier.
@@ -45,7 +45,7 @@ func Init() (err error) {
 	}
 
 	if runtimeInstance.Params.AppDomainFriendlyName == "" {
-		runtimeInstance.Params.AppDomainFriendlyName = DefaultAppDomainFriendlyName
+		runtimeInstance.Params.AppDomainFriendlyName = defaultAppDomainFriendlyName
 	}
 
 	if runtimeInstance.Params.Properties == nil {
@@ -59,66 +59,66 @@ func Init() (err error) {
 		runtimeInstance.Params.Properties["NATIVE_DLL_SEARCH_DIRECTORIES"] = executableFolder
 	}
 
-	propertyCount := len(runtimeInstance.Params.Properties)
+	count := len(runtimeInstance.Params.Properties)
 
-	propertyKeys := make([]string, 0, len(runtimeInstance.Params.Properties))
-	propertyValues := make([]string, 0, len(runtimeInstance.Params.Properties))
+	keys := make([]string, 0, len(runtimeInstance.Params.Properties))
+	vals := make([]string, 0, len(runtimeInstance.Params.Properties))
 
 	for k, v := range runtimeInstance.Params.Properties {
-		propertyKeys = append(propertyKeys, k)
-		propertyValues = append(propertyValues, v)
+		keys = append(keys, k)
+		vals = append(vals, v)
 	}
 
-	ExePath := C.CString(runtimeInstance.Params.ExePath)
-	AppDomainFriendlyName := C.CString(runtimeInstance.Params.AppDomainFriendlyName)
-	PropertyCount := C.int(propertyCount)
-	PropertyKeys := C.CString(strings.Join(propertyKeys, ";"))
-	PropertyValues := C.CString(strings.Join(propertyValues, ";"))
+	exePath := C.CString(runtimeInstance.Params.ExePath)
+	appDomainFriendlyName := C.CString(runtimeInstance.Params.AppDomainFriendlyName)
+	propertyCount := C.int(count)
+	propertyKeys := C.CString(strings.Join(keys, ";"))
+	propertyValues := C.CString(strings.Join(vals, ";"))
 
-	var CLRFilesAbsolutePath string
+	var clrFilesAbsolutePath string
 
-	// CLRCommonPaths holds possible SDK locations
-	var CLRCommonPaths = []string{
+	// clrCommonPaths holds possible SDK locations
+	var clrCommonPaths = []string{
 		"/usr/local/share/dotnet/shared/Microsoft.NETCore.App/1.0.0",
 		"/usr/share/dotnet/shared/Microsoft.NETCore.App/1.0.0",
 	}
 
 	// Test for common SDK paths, return err if they don't exist
 	if runtimeInstance.Params.CLRFilesAbsolutePath == "" {
-		for _, p := range CLRCommonPaths {
+		for _, p := range clrCommonPaths {
 			_, err = os.Stat(p)
 			if err == nil {
-				CLRFilesAbsolutePath = p
+				clrFilesAbsolutePath = p
 				break
 			}
 		}
 
-		if CLRFilesAbsolutePath == "" {
+		if clrFilesAbsolutePath == "" {
 			err = errors.New("No SDK found")
 			return err
 		}
 	} else {
-		CLRFilesAbsolutePath = runtimeInstance.Params.CLRFilesAbsolutePath
+		clrFilesAbsolutePath = runtimeInstance.Params.CLRFilesAbsolutePath
 	}
 
-	CLRFilesAbsolutePathC := C.CString(CLRFilesAbsolutePath)
+	clrFilesAbsolutePathC := C.CString(clrFilesAbsolutePath)
 
-	ManagedAssemblyAbsolutePath := C.CString(runtimeInstance.Params.ManagedAssemblyAbsolutePath)
+	managedAssemblyAbsolutePath := C.CString(runtimeInstance.Params.ManagedAssemblyAbsolutePath)
 
 	// Call the binding
 	var result C.int
-	result = C.initializeCoreCLR(ExePath, AppDomainFriendlyName, PropertyCount, PropertyKeys, PropertyValues, ManagedAssemblyAbsolutePath, CLRFilesAbsolutePathC)
+	result = C.initializeCoreCLR(exePath, appDomainFriendlyName, propertyCount, propertyKeys, propertyValues, managedAssemblyAbsolutePath, clrFilesAbsolutePathC)
 
 	if result == -1 {
 		err = errors.New("Runtime error")
 	}
 
-	C.free(unsafe.Pointer(ExePath))
-	C.free(unsafe.Pointer(AppDomainFriendlyName))
-	C.free(unsafe.Pointer(PropertyKeys))
-	C.free(unsafe.Pointer(PropertyValues))
-	C.free(unsafe.Pointer(ManagedAssemblyAbsolutePath))
-	C.free(unsafe.Pointer(CLRFilesAbsolutePathC))
+	C.free(unsafe.Pointer(exePath))
+	C.free(unsafe.Pointer(appDomainFriendlyName))
+	C.free(unsafe.Pointer(propertyKeys))
+	C.free(unsafe.Pointer(propertyValues))
+	C.free(unsafe.Pointer(managedAssemblyAbsolutePath))
+	C.free(unsafe.Pointer(clrFilesAbsolutePathC))
 
 	runtimeInstance.delegateSetup()
 
@@ -141,12 +141,12 @@ func (r *Runtime) Shutdown() (err error) {
 }
 
 // CreateDelegate wraps a cgo call to coreclr_create_delegate, receives a function pointer.
-func CreateDelegate(assemblyName string, typeName string, methodName string, delegateID int, f *unsafe.Pointer) int {
-	CassemblyName := C.CString(assemblyName)
-	CtypeName := C.CString(typeName)
-	CmethodName := C.CString(methodName)
-	CdelegateID := C.int(0)
-	result := C.createDelegate(CassemblyName, CtypeName, CmethodName, CdelegateID, f)
+func CreateDelegate(assembly string, typ string, method string, delegate int, f *unsafe.Pointer) int {
+	assemblyName := C.CString(assembly)
+	typeName := C.CString(typ)
+	methodName := C.CString(method)
+	delegateID := C.int(delegate)
+	result := C.createDelegate(assemblyName, typeName, methodName, delegateID, f)
 	return int(result)
 }
 
