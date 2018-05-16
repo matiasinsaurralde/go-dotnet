@@ -14,10 +14,6 @@
 
 #include "runtime.hpp"
 
-static const char* serverGcVar = "CORECLR_SERVER_GC";
-const char* useServerGc;
-
-
 int initializeCoreCLR(const char* exePath,
             const char* appDomainFriendlyName,
             int propertyCount,
@@ -25,7 +21,6 @@ int initializeCoreCLR(const char* exePath,
             const char* mergedPropertyValues,
             const char* managedAssemblyAbsolutePath,
             const char* clrFilesAbsolutePath) {
-  printf("initializeCoreCLR()\n");
 
   std::string coreClrDllPath(clrFilesAbsolutePath);
   coreClrDllPath.append("/");
@@ -39,9 +34,9 @@ int initializeCoreCLR(const char* exePath,
   std::string appPath;
 
   if( managedAssemblyAbsolutePath[0] == '\0' ) {
-    printf("Expecting to run a standard .exe\n");
+    // printf("Expecting to run a standard .exe\n");
   } else {
-    printf("Expecting to load an assembly and invoke arbitrary methods.\n");
+    // printf("Expecting to load an assembly and invoke arbitrary methods.\n");
     GetDirectory(managedAssemblyAbsolutePath, appPath);
   };
 
@@ -132,7 +127,7 @@ int initializeCoreCLR(const char* exePath,
                     &domainId);
 
         if (SUCCEEDED(st)) {
-          printf("coreclr_initialize ok\n");
+          // printf("coreclr_initialize ok\n");
         } else {
           fprintf(stderr, "coreclr_initialize failed - status: 0x%08x\n", st);
         };
@@ -145,7 +140,6 @@ int initializeCoreCLR(const char* exePath,
 }
 
 int shutdownCoreCLR() {
-  printf("shutdownCoreCLR()\n");
   int st = shutdown_core_clr(hostHandle, domainId);
   if (!SUCCEEDED(st)) {
     fprintf(stderr, "coreclr_shutdown failed - status: 0x%08x\n", st);
