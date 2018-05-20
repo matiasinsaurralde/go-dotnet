@@ -120,6 +120,10 @@ Coming soon!
 
 I'm open to PRs, Go/.NET swag, suggestions, etc.
 
+## Additional resources
+
+* [Hosting .NET Core](https://github.com/dotnet/docs/blob/master/docs/core/tutorials/netcore-hosting.md)
+
 ## License
 
 [MIT](LICENSE)
