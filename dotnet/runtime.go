@@ -19,6 +19,13 @@ import (
 
 var runtimeInstance = &Runtime{}
 
+const (
+	assemblyNotFound       = 0x80070002
+	typeLoadException      = 0x80131522
+	missingMethodException = 0x80131513
+	nullReferenceException = 0x80004003
+)
+
 // Runtime is the runtime data structure.
 type Runtime struct {
 	Params        RuntimeParams
@@ -141,13 +148,24 @@ func (r *Runtime) Shutdown() (err error) {
 }
 
 // CreateDelegate wraps a cgo call to coreclr_create_delegate, receives a function pointer.
-func CreateDelegate(assembly string, typ string, method string, delegate int, f *unsafe.Pointer) int {
+func CreateDelegate(assembly string, typ string, method string, delegate int, f *unsafe.Pointer) error {
 	assemblyName := C.CString(assembly)
 	typeName := C.CString(typ)
 	methodName := C.CString(method)
 	delegateID := C.int(delegate)
 	result := C.createDelegate(assemblyName, typeName, methodName, delegateID, f)
-	return int(result)
+	code := uint32(result)
+	switch code {
+	case assemblyNotFound:
+		return errors.New("Assembly not found")
+	case typeLoadException:
+		return errors.New("Missing type")
+	case missingMethodException:
+		return errors.New("Missing method")
+	case nullReferenceException:
+		return errors.New("Invalid delegate function pointer")
+	}
+	return nil
 }
 
 // SetupDelegates sets all create_delegate calls to be executed after the runtime initialization.
