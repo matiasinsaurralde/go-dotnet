@@ -1,4 +1,4 @@
-// Package go-dotnet provides a very simple wrapper for the .NET Core CLR.
+// Package dotnet provides a very simple wrapper for the .NET Core CLR.
 //
 // You may find more information about .NET Core here:
 //
