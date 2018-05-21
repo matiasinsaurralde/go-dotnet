@@ -1,7 +1,8 @@
 # go-dotnet
 
-[![MIT License][license-image]][license-url]
 [![GoDoc](https://godoc.org/github.com/matiasinsaurralde/go-dotnet?status.svg)](https://godoc.org/github.com/matiasinsaurralde/go-dotnet)
+[![MIT License][license-image]][license-url]
+[![Build status][master-build-image]][master-build-status]
 
 This is a PoC Go wrapper for the .NET Core Runtime, this project uses ```cgo``` and has been tested under OSX. It covers two basic use cases provided by the [CLR Hosting API](https://blogs.msdn.microsoft.com/msdnforum/2010/07/09/use-clr4-hosting-api-to-invoke-net-assembly-from-native-c/):
 
@@ -124,6 +125,13 @@ I'm open to PRs, Go/.NET swag, suggestions, etc.
 
 * [Hosting .NET Core](https://github.com/dotnet/docs/blob/master/docs/core/tutorials/netcore-hosting.md)
 
+Build Status
+------------
+
+Linux x64 / Go 1.9 / .NET Core 2.0
+
+[![wercker status](https://app.wercker.com/status/a54ca1ccc44008eeff3c0772e63119bf/s/master "wercker status")](https://app.wercker.com/project/byKey/a54ca1ccc44008eeff3c0772e63119bf)
+
 ## License
 
 [MIT](LICENSE)
@@ -133,3 +141,7 @@ I'm open to PRs, Go/.NET swag, suggestions, etc.
 [license-image]: http://img.shields.io/badge/license-MIT-blue.svg?style=flat
 
 [capture]: capture.png
+
+[master-build-image]: https://app.wercker.com/status/a54ca1ccc44008eeff3c0772e63119bf/s/master
+
+[master-build-status]: https://app.wercker.com/project/byKey/a54ca1ccc44008eeff3c0772e63119bf
