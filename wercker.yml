@@ -1,0 +1,23 @@
+box:
+  id: golang
+
+dev:
+  steps:
+    - internal/watch:
+        code: |
+          go build ./...
+          ./source
+        reload: true
+
+build:
+  steps:
+    - wercker/golint:
+        exclude: "^(pkg|vendor|playground)"
+    - script:
+        name: go build
+        code: |
+          go build ./...
+    - script:
+        name: go test
+        code: |
+          go test ./...
