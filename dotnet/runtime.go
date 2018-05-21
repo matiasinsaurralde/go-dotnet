@@ -98,6 +98,7 @@ func Init() (err error) {
 
 	// clrCommonPaths holds possible SDK locations
 	var clrCommonPaths = []string{
+		"/usr/share/dotnet/shared/Microsoft.NETCore.App/2.0.7",
 		"/usr/local/share/dotnet/shared/Microsoft.NETCore.App/1.0.0",
 		"/usr/share/dotnet/shared/Microsoft.NETCore.App/1.0.0",
 	}
