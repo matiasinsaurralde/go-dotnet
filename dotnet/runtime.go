@@ -10,7 +10,10 @@ import "C"
 
 import (
 	"errors"
+	"io/ioutil"
 	"os"
+	"path/filepath"
+	"runtime"
 	"strings"
 	"unsafe"
 
@@ -24,6 +27,9 @@ const (
 	nullReferenceException = 0x80004003
 
 	defaultAppDomainFriendlyName = "app"
+
+	darwinSDKPath = "/usr/local/share/dotnet/shared/Microsoft.NETCore.App"
+	linuxSDKPath  = "/usr/share/dotnet/shared/Microsoft.NETCore.App"
 )
 
 var (
@@ -97,11 +103,7 @@ func Init() (err error) {
 	var clrFilesAbsolutePath string
 
 	// clrCommonPaths holds possible SDK locations
-	var clrCommonPaths = []string{
-		"/usr/share/dotnet/shared/Microsoft.NETCore.App/2.0.7",
-		"/usr/local/share/dotnet/shared/Microsoft.NETCore.App/1.0.0",
-		"/usr/share/dotnet/shared/Microsoft.NETCore.App/1.0.0",
-	}
+	clrCommonPaths := locateSDK()
 
 	// Test for common SDK paths, return err if they don't exist
 	if runtimeInstance.Params.CLRFilesAbsolutePath == "" {
@@ -145,6 +147,25 @@ func Init() (err error) {
 		return nil
 	}
 	return runtimeInstance.delegateSetup()
+}
+
+// locateSDK finds the SDK path
+// TODO: allow the user to use a specific version when multiple SDKs are present.
+func locateSDK() (sdkDirectories []string) {
+	var baseDir string
+	switch runtime.GOOS {
+	case "darwin":
+		baseDir = darwinSDKPath
+		break
+	case "linux":
+		baseDir = linuxSDKPath
+	}
+	directories, _ := ioutil.ReadDir(baseDir)
+	for _, v := range directories {
+		fullPath := filepath.Join(baseDir, v.Name())
+		sdkDirectories = append(sdkDirectories, fullPath)
+	}
+	return sdkDirectories
 }
 
 // Shutdown unloads the current app
