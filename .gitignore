@@ -24,3 +24,7 @@ _testmain.go
 *.prof
 
 *.dll
+.vscode
+playground
+pkg
+.wercker
