@@ -1,13 +1,5 @@
 box:
-  id: matiasinsaurralde/go-dotnet-docker
-
-dev:
-  steps:
-    - internal/watch:
-        code: |
-          go build ./...
-          ./source
-        reload: true
+  id: matiasinsaurralde/go-dotnet-docker:latest
 
 build:
   steps:
@@ -16,9 +8,24 @@ build:
     - script:
         name: prepare env
         code: |
-          mkdir -p /root/go/src/github.com/matiasinsauralde
-          ln -s $WERCKER_SOURCE_DIR /root/go/src/github.com/matiasinsauralde/go-dotnet
+          mkdir -p $GOPATH/src/github.com/matiasinsauralde
+          ln -s $WERCKER_SOURCE_DIR $GOPATH/src/github.com/matiasinsauralde/go-dotnet
     - script:
         name: go test
         code: |
-          cd /root/go/src/github.com/matiasinsauralde/go-dotnet/dotnet && go test -v
+          cd $GOPATH/src/github.com/matiasinsauralde/go-dotnet/dotnet && go test -v
+
+go19-dotnet21:
+  box: "matiasinsaurralde/go-dotnet-docker:go19-dotnet21"
+  steps:
+    - wercker/golint:
+        exclude: "^(pkg|vendor|playground)"
+    - script:
+        name: prepare env
+        code: |
+          mkdir -p $GOPATH/src/github.com/matiasinsauralde
+          ln -s $WERCKER_SOURCE_DIR $GOPATH/src/github.com/matiasinsauralde/go-dotnet
+    - script:
+        name: go test
+        code: |
+          cd $GOPATH/src/github.com/matiasinsauralde/go-dotnet/dotnet && go test -v
