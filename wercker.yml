@@ -1,5 +1,5 @@
 box:
-  id: golang
+  id: matiasinsaurralde/go-dotnet-docker
 
 dev:
   steps:
@@ -14,10 +14,11 @@ build:
     - wercker/golint:
         exclude: "^(pkg|vendor|playground)"
     - script:
-        name: go build
+        name: prepare env
         code: |
-          go build ./...
+          mkdir -p /root/go/src/github.com/matiasinsauralde
+          ln -s $WERCKER_SOURCE_DIR /root/go/src/github.com/matiasinsauralde/go-dotnet
     - script:
         name: go test
         code: |
-          go test ./...
+          cd /root/go/src/github.com/matiasinsauralde/go-dotnet/dotnet && go test -v
