@@ -9,27 +9,36 @@ package dotnet
 import "C"
 
 import (
-	"github.com/kardianos/osext"
-
 	"errors"
 	"os"
 	"strings"
 	"unsafe"
-)
 
-var runtimeInstance = &Runtime{}
+	"github.com/kardianos/osext"
+)
 
 const (
 	assemblyNotFound       = 0x80070002
 	typeLoadException      = 0x80131522
 	missingMethodException = 0x80131513
 	nullReferenceException = 0x80004003
+
+	defaultAppDomainFriendlyName = "app"
+)
+
+var (
+	runtimeInstance = &Runtime{}
+
+	errAssemblyNotFound       = errors.New("Assembly not found")
+	errTypeLoadException      = errors.New("Missing type")
+	errMissingMethodException = errors.New("Missing method")
+	errNullReferenceException = errors.New("Invalid delegate function pointer")
 )
 
 // Runtime is the runtime data structure.
 type Runtime struct {
 	Params        RuntimeParams
-	delegateSetup func()
+	delegateSetup func() error
 }
 
 // RuntimeParams holds the CLR initialization parameters
@@ -42,7 +51,10 @@ type RuntimeParams struct {
 	CLRFilesAbsolutePath string
 }
 
-const defaultAppDomainFriendlyName string = "app"
+// SetParams sets initial runtime parameters.
+func SetParams(params RuntimeParams) {
+	runtimeInstance.Params = params
+}
 
 // Init performs the runtime initialization
 // This function sets a few default values to make everything easier.
@@ -127,9 +139,11 @@ func Init() (err error) {
 	C.free(unsafe.Pointer(managedAssemblyAbsolutePath))
 	C.free(unsafe.Pointer(clrFilesAbsolutePathC))
 
-	runtimeInstance.delegateSetup()
-
-	return err
+	// No delegates set?
+	if runtimeInstance.delegateSetup == nil {
+		return nil
+	}
+	return runtimeInstance.delegateSetup()
 }
 
 // Shutdown unloads the current app
@@ -157,18 +171,18 @@ func CreateDelegate(assembly string, typ string, method string, delegate int, f 
 	code := uint32(result)
 	switch code {
 	case assemblyNotFound:
-		return errors.New("Assembly not found")
+		return errAssemblyNotFound
 	case typeLoadException:
-		return errors.New("Missing type")
+		return errTypeLoadException
 	case missingMethodException:
-		return errors.New("Missing method")
+		return errMissingMethodException
 	case nullReferenceException:
-		return errors.New("Invalid delegate function pointer")
+		return errNullReferenceException
 	}
 	return nil
 }
 
 // SetupDelegates sets all create_delegate calls to be executed after the runtime initialization.
-func SetupDelegates(f func()) {
+func SetupDelegates(f func() error) {
 	runtimeInstance.delegateSetup = f
 }
