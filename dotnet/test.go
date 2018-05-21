@@ -18,6 +18,17 @@ DummyFunc dummyFunc;
 void** getDummyFunc() {
 	return (void**)&dummyFunc;
 }
+
+typedef char* (*StringFunc)();
+StringFunc stringFunc;
+
+void** getStringFunc() {
+	return (void**)&stringFunc;
+}
+
+char* callStringFunc() {
+	return stringFunc();
+}
 */
 import "C"
 import "unsafe"
@@ -32,4 +43,12 @@ func callAddFunc(a, b int) int {
 
 func getDummyFunc() *unsafe.Pointer {
 	return C.getDummyFunc()
+}
+
+func getStringFunc() *unsafe.Pointer {
+	return C.getStringFunc()
+}
+
+func callStringFunc() string {
+	return C.GoString(C.callStringFunc())
 }

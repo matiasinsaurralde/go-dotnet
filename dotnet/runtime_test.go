@@ -28,8 +28,13 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	f := getAddFunc()
-	err = CreateDelegate("Test", "Test.TestClass", "Add", 0, f)
+	addFunc := getAddFunc()
+	err = CreateDelegate("Test", "Test.TestClass", "Add", 0, addFunc)
+	if err != nil {
+		panic(err)
+	}
+	stringFunc := getStringFunc()
+	err = CreateDelegate("Test", "Test.TestClass", "String", 0, stringFunc)
 	if err != nil {
 		panic(err)
 	}
@@ -61,9 +66,23 @@ func TestAddFunc(t *testing.T) {
 	}
 }
 
+func TestStringFunc(t *testing.T) {
+	s := callStringFunc()
+	if s != "teststring" {
+		t.Fatalf("StringFunc call failed, got %s, expected %s", s, "teststring")
+	}
+}
+
 func BenchmarkAddFunc(b *testing.B) {
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
 		callAddFunc(2, 2)
+	}
+}
+
+func BenchmarkStringFunc(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		callStringFunc()
 	}
 }
