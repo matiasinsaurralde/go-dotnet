@@ -1,0 +1,41 @@
+language: go
+go:
+  - "1.9"
+  - "1.10"
+
+env:
+  - DOTNET_VERSION=1.0
+  - DOTNET_VERSION=2.0
+
+sudo: required
+dist: trusty
+
+addons:
+  apt:
+    update: true
+    packages:
+      - gettext
+      - libunwind8-dev
+      - libunwind8
+      - zlib1g
+
+matrix:
+  include:
+    - os: osx
+      go: "1.9"
+      env: DOTNET_VERSION=1.0
+    - os: osx
+      go: "1.10"
+      env: DOTNET_VERSION=1.0
+    - os: osx
+      go: "1.9"
+      env: DOTNET_VERSION=2.0
+    - os: osx
+      go: "1.10"
+      env: DOTNET_VERSION=2.0
+
+install:
+  - .travis/install.sh
+
+script:
+ - go test -v ./...
