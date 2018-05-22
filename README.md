@@ -3,6 +3,7 @@
 [![GoDoc](https://godoc.org/github.com/matiasinsaurralde/go-dotnet?status.svg)](https://godoc.org/github.com/matiasinsaurralde/go-dotnet)
 [![MIT License][license-image]][license-url]
 [![Build status][master-build-image]][master-build-status]
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmatiasinsaurralde%2Fgo-dotnet.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmatiasinsaurralde%2Fgo-dotnet?ref=badge_shield)
 
 This is a PoC Go wrapper for the .NET Core Runtime, this project uses ```cgo``` and has been tested under OSX. It covers two basic use cases provided by the [CLR Hosting API](https://blogs.msdn.microsoft.com/msdnforum/2010/07/09/use-clr4-hosting-api-to-invoke-net-assembly-from-native-c/):
 
@@ -145,3 +146,5 @@ Linux x64 / Go 1.9 / .NET Core 2.0
 [master-build-image]: https://app.wercker.com/status/a54ca1ccc44008eeff3c0772e63119bf/s/master
 
 [master-build-status]: https://app.wercker.com/project/byKey/a54ca1ccc44008eeff3c0772e63119bf
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmatiasinsaurralde%2Fgo-dotnet.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmatiasinsaurralde%2Fgo-dotnet?ref=badge_large)
