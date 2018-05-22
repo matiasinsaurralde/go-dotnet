@@ -27,9 +27,6 @@ const (
 	nullReferenceException = 0x80004003
 
 	defaultAppDomainFriendlyName = "app"
-
-	darwinSDKPath = "/usr/local/share/dotnet/shared/Microsoft.NETCore.App"
-	linuxSDKPath  = "/usr/share/dotnet/shared/Microsoft.NETCore.App"
 )
 
 var (
@@ -39,6 +36,16 @@ var (
 	errTypeLoadException      = errors.New("Missing type")
 	errMissingMethodException = errors.New("Missing method")
 	errNullReferenceException = errors.New("Invalid delegate function pointer")
+
+	linuxSDKPaths = []string{
+		"/usr/share/dotnet/shared/Microsoft.NETCore.App",
+		"$HOME/.dotnet/shared/Microsoft.NETCore.App",
+	}
+
+	darwinSDKPaths = []string{
+		"/usr/local/share/dotnet/shared/Microsoft.NETCore.App",
+		"$HOME/.dotnet/shared/Microsoft.NETCore.App",
+	}
 )
 
 // Runtime is the runtime data structure.
@@ -152,18 +159,27 @@ func Init() (err error) {
 // locateSDK finds the SDK path
 // TODO: allow the user to use a specific version when multiple SDKs are present.
 func locateSDK() (sdkDirectories []string) {
-	var baseDir string
+	var basePaths []string
 	switch runtime.GOOS {
 	case "darwin":
-		baseDir = darwinSDKPath
+		basePaths = darwinSDKPaths
 		break
 	case "linux":
-		baseDir = linuxSDKPath
+		basePaths = linuxSDKPaths
 	}
-	directories, _ := ioutil.ReadDir(baseDir)
-	for _, v := range directories {
-		fullPath := filepath.Join(baseDir, v.Name())
-		sdkDirectories = append(sdkDirectories, fullPath)
+	// Replace HOME env var from base paths:
+	homeEnv := os.Getenv("HOME")
+
+	for _, basePath := range basePaths {
+		basePath = strings.Replace(basePath, "$HOME", homeEnv, 1)
+		directories, err := ioutil.ReadDir(basePath)
+		if err != nil {
+			continue
+		}
+		for _, d := range directories {
+			fullPath := filepath.Join(basePath, d.Name())
+			sdkDirectories = append(sdkDirectories, fullPath)
+		}
 	}
 	return sdkDirectories
 }
