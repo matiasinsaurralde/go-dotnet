@@ -12,6 +12,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"os"
+	"path"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -27,6 +28,18 @@ const (
 	nullReferenceException = 0x80004003
 
 	defaultAppDomainFriendlyName = "app"
+
+	// CoreLibraries is an optional environment variable name.
+	CoreLibraries = "CORE_LIBRARIES"
+
+	// AppPaths is a property.
+	AppPaths = "AppPaths"
+
+	// NativeDLLSearchDirectories is a property.
+	NativeDLLSearchDirectories = "NATIVE_DLL_SEARCH_DIRECTORIES"
+
+	// TrustedPlatformAssemblues is a property.
+	TrustedPlatformAssemblues = "TRUSTED_PLATFORM_ASSEMBLIES"
 )
 
 var (
@@ -49,6 +62,13 @@ var (
 
 	windowsSDKPaths = []string{
 		"C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App",
+	}
+
+	tpaExtensions = []string{
+		".ni.dll",
+		".dll",
+		".ni.exe",
+		".exe",
 	}
 )
 
@@ -88,31 +108,17 @@ func Init() (err error) {
 		runtimeInstance.Params.Properties = make(map[string]string)
 	}
 
-	// In case you don't set APP_PATHS/NATIVE_DLL_SEARCH_DIRECTORIES, the package assumes your assemblies are in the same directory.
-	if runtimeInstance.Params.Properties["APP_PATHS"] == "" && runtimeInstance.Params.Properties["NATIVE_DLL_SEARCH_DIRECTORIES"] == "" {
-		executableFolder, _ := osext.ExecutableFolder()
-		runtimeInstance.Params.Properties["APP_PATHS"] = executableFolder
-		runtimeInstance.Params.Properties["NATIVE_DLL_SEARCH_DIRECTORIES"] = executableFolder
+	executableFolder, _ := osext.ExecutableFolder()
+	if runtimeInstance.Params.Properties[AppPaths] == "" {
+		runtimeInstance.Params.Properties[AppPaths] = executableFolder
 	}
 
-	count := len(runtimeInstance.Params.Properties)
-
-	keys := make([]string, 0, len(runtimeInstance.Params.Properties))
-	vals := make([]string, 0, len(runtimeInstance.Params.Properties))
-
-	for k, v := range runtimeInstance.Params.Properties {
-		keys = append(keys, k)
-		vals = append(vals, v)
+	var nativeDLLSearchDirs []string
+	if runtimeInstance.Params.Properties[NativeDLLSearchDirectories] == "" {
+		nativeDLLSearchDirs = append(nativeDLLSearchDirs, executableFolder)
 	}
-
-	exePath := C.CString(runtimeInstance.Params.ExePath)
-	appDomainFriendlyName := C.CString(runtimeInstance.Params.AppDomainFriendlyName)
-	propertyCount := C.int(count)
-	propertyKeys := C.CString(strings.Join(keys, ";"))
-	propertyValues := C.CString(strings.Join(vals, ";"))
 
 	var clrFilesAbsolutePath string
-
 	// clrCommonPaths holds possible SDK locations
 	clrCommonPaths := locateSDK()
 
@@ -133,6 +139,36 @@ func Init() (err error) {
 	} else {
 		clrFilesAbsolutePath = runtimeInstance.Params.CLRFilesAbsolutePath
 	}
+
+	tpaList, err := getTrustedPlatformAssemblies(clrFilesAbsolutePath)
+	if err != nil {
+		return err
+	}
+	runtimeInstance.Params.Properties[TrustedPlatformAssemblues] = strings.Join(tpaList, ":")
+
+	// If CORE_LIBRARIES is set, append it to search directories:
+	coreLibraries := os.Getenv(CoreLibraries)
+	if coreLibraries != "" {
+		nativeDLLSearchDirs = append(nativeDLLSearchDirs, coreLibraries)
+	}
+	nativeDLLSearchDirs = append(nativeDLLSearchDirs, clrFilesAbsolutePath)
+	runtimeInstance.Params.Properties[NativeDLLSearchDirectories] = strings.Join(nativeDLLSearchDirs, ":")
+
+	count := len(runtimeInstance.Params.Properties)
+
+	keys := make([]string, 0, len(runtimeInstance.Params.Properties))
+	vals := make([]string, 0, len(runtimeInstance.Params.Properties))
+
+	for k, v := range runtimeInstance.Params.Properties {
+		keys = append(keys, k)
+		vals = append(vals, v)
+	}
+
+	exePath := C.CString(runtimeInstance.Params.ExePath)
+	appDomainFriendlyName := C.CString(runtimeInstance.Params.AppDomainFriendlyName)
+	propertyCount := C.int(count)
+	propertyKeys := C.CString(strings.Join(keys, ";"))
+	propertyValues := C.CString(strings.Join(vals, ";"))
 
 	clrFilesAbsolutePathC := C.CString(clrFilesAbsolutePath)
 
@@ -188,6 +224,25 @@ func locateSDK() (sdkDirectories []string) {
 		}
 	}
 	return sdkDirectories
+}
+
+func getTrustedPlatformAssemblies(basePath string) ([]string, error) {
+	items, err := ioutil.ReadDir(basePath)
+	if err != nil {
+		return nil, err
+	}
+	var assemblies []string
+	for _, ext := range tpaExtensions {
+		for _, item := range items {
+			filename := item.Name()
+			fileExt := path.Ext(filename)
+			if fileExt == ext {
+				fullPath := filepath.Join(basePath, filename)
+				assemblies = append(assemblies, fullPath)
+			}
+		}
+	}
+	return assemblies, nil
 }
 
 // Shutdown unloads the current app

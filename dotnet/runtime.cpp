@@ -11,7 +11,6 @@
 #include <stdlib.h>
 
 #include "coreruncommon.h"
-
 #include "runtime.hpp"
 
 int initializeCoreCLR(const char* exePath,
@@ -30,29 +29,6 @@ int initializeCoreCLR(const char* exePath,
   {
       fprintf(stderr, "Absolute path to libcoreclr.so too long\n");
   }
-
-  std::string appPath;
-
-  if( managedAssemblyAbsolutePath[0] == '\0' ) {
-    // printf("Expecting to run a standard .exe\n");
-  } else {
-    // printf("Expecting to load an assembly and invoke arbitrary methods.\n");
-    GetDirectory(managedAssemblyAbsolutePath, appPath);
-  };
-
-  // Construct native search directory paths
-  std::string nativeDllSearchDirs(appPath);
-  char *coreLibraries = getenv("CORE_LIBRARIES");
-  if (coreLibraries)
-  {
-      nativeDllSearchDirs.append(":");
-      nativeDllSearchDirs.append(coreLibraries);
-  }
-  nativeDllSearchDirs.append(":");
-  nativeDllSearchDirs.append(clrFilesAbsolutePath);
-
-  std::string tpaList;
-  AddFilesFromDirectoryToTpaList(clrFilesAbsolutePath, tpaList);
 
   coreclrLib = dlopen(coreClrDllPath.c_str(), RTLD_NOW | RTLD_LOCAL);
   if (coreclrLib != nullptr)
@@ -86,36 +62,11 @@ int initializeCoreCLR(const char* exePath,
 
         useServerGc = std::strcmp(useServerGc, "1") == 0 ? "true" : "false";
 
-        // Keep enough space for inserting the tpaList:
-        propertyCount++;
-
         char *keys[propertyCount];
         char *values[propertyCount];
 
         parseValues(mergedPropertyKeys, keys, propertyCount);
         parseValues(mergedPropertyValues, values, propertyCount);
-
-        bool tpaOverride = false;
-
-        const char *tpaKey = "TRUSTED_PLATFORM_ASSEMBLIES";
-
-        for( int i = 0; i < propertyCount ; i++ ) {
-          int match = strncmp( tpaKey, keys[i], strlen(tpaKey) );
-          if( match == 0 ) {
-            tpaOverride = true;
-            break;
-          }
-        };
-
-        if( !tpaOverride ) {
-          keys[propertyCount] = (char*)std::malloc(strlen(tpaKey)+1);
-          std::strcpy(keys[propertyCount], tpaKey);
-
-          values[propertyCount] = (char*)std::malloc(strlen(tpaList.c_str())+1);
-          std::strcpy(values[propertyCount], tpaList.c_str());
-
-          propertyCount++;
-        };
 
         int st = initialize_core_clr(
                     exePath,
@@ -126,10 +77,9 @@ int initializeCoreCLR(const char* exePath,
                     &hostHandle,
                     &domainId);
 
-        if (SUCCEEDED(st)) {
-          // printf("coreclr_initialize ok\n");
-        } else {
+        if (!SUCCEEDED(st)) {
           fprintf(stderr, "coreclr_initialize failed - status: 0x%08x\n", st);
+          return -1;
         };
 
       }
@@ -173,8 +123,9 @@ void parseValues(const char* input, char** dest, int count) {
   int i = 0;
   while( std::getline(values, e, ';')) {
     const char *v = e.c_str();
-    dest[i] = (char*)std::malloc(strlen(v)+1);
-    std::strcpy(dest[i], v);
+    size_t len = strlen(v)+1;
+    dest[i] = (char*)std::malloc(len);
+    std::strncpy(dest[i], v, len);
     i++;
   }
 };
