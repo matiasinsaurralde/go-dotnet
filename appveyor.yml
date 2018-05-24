@@ -1,0 +1,23 @@
+version: 1.0.0.{build}
+
+platform: x64
+
+branches:
+  only:
+    - windows-support
+
+clone_folder: c:\gopath\src\github.com\matiasinsaurralde\go-dotnet
+
+environment:
+  GOPATH: c:\gopath
+  MSYSTEM: MINGW64
+
+install:
+  - set PATH=c:\msys64\usr\bin;c:\msys64\bin;C:\msys64\mingw64\bin;%GOPATH%\bin;c:\go\bin;%PATH%
+  - c:\msys64\usr\bin\pacman -Syyuu --noconfirm
+  - c:\msys64\usr\bin\pacman -S --noconfirm mingw64/mingw-w64-x86_64-dlfcn
+
+build: false
+
+test_script:
+  - c:\msys64\usr\bin\bash -lc "cd ${APPVEYOR_BUILD_FOLDER} && utils/ci-test.sh"
