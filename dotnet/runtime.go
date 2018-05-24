@@ -70,6 +70,10 @@ var (
 		".ni.exe",
 		".exe",
 	}
+
+	clrLinuxDLL = "libcoreclr.so"
+	clrDarwin   = "libcoreclr.dylib"
+	clrWindows  = "coreclr.dll"
 )
 
 // Runtime is the runtime data structure.
@@ -118,7 +122,7 @@ func Init() (err error) {
 		nativeDLLSearchDirs = append(nativeDLLSearchDirs, executableFolder)
 	}
 
-	var clrFilesAbsolutePath string
+	var clrFilesAbsolutePath, clrDLLPath string
 	// clrCommonPaths holds possible SDK locations
 	clrCommonPaths := locateSDK()
 
@@ -139,6 +143,16 @@ func Init() (err error) {
 	} else {
 		clrFilesAbsolutePath = runtimeInstance.Params.CLRFilesAbsolutePath
 	}
+
+	switch runtime.GOOS {
+	case "darwin":
+		clrDLLPath = clrDarwin
+	case "linux":
+		clrDLLPath = clrLinuxDLL
+	case "windows":
+		clrDLLPath = clrWindows
+	}
+	clrDLLPath = filepath.Join(clrFilesAbsolutePath, clrDLLPath)
 
 	tpaList, err := getTrustedPlatformAssemblies(clrFilesAbsolutePath)
 	if err != nil {
@@ -170,13 +184,12 @@ func Init() (err error) {
 	propertyKeys := C.CString(strings.Join(keys, ";"))
 	propertyValues := C.CString(strings.Join(vals, ";"))
 
-	clrFilesAbsolutePathC := C.CString(clrFilesAbsolutePath)
-
 	managedAssemblyAbsolutePath := C.CString(runtimeInstance.Params.ManagedAssemblyAbsolutePath)
+	dllPath := C.CString(clrDLLPath)
 
 	// Call the binding
 	var result C.int
-	result = C.initializeCoreCLR(exePath, appDomainFriendlyName, propertyCount, propertyKeys, propertyValues, managedAssemblyAbsolutePath, clrFilesAbsolutePathC)
+	result = C.initializeCoreCLR(exePath, appDomainFriendlyName, propertyCount, propertyKeys, propertyValues, managedAssemblyAbsolutePath, dllPath)
 
 	if result == -1 {
 		err = errors.New("Runtime error")
@@ -187,7 +200,7 @@ func Init() (err error) {
 	C.free(unsafe.Pointer(propertyKeys))
 	C.free(unsafe.Pointer(propertyValues))
 	C.free(unsafe.Pointer(managedAssemblyAbsolutePath))
-	C.free(unsafe.Pointer(clrFilesAbsolutePathC))
+	C.free(unsafe.Pointer(dllPath))
 
 	// No delegates set?
 	if runtimeInstance.delegateSetup == nil {

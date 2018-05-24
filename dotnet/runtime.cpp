@@ -19,18 +19,9 @@ int initializeCoreCLR(const char* exePath,
             const char* mergedPropertyKeys,
             const char* mergedPropertyValues,
             const char* managedAssemblyAbsolutePath,
-            const char* clrFilesAbsolutePath) {
+            const char* clrDLLPath) {
 
-  std::string coreClrDllPath(clrFilesAbsolutePath);
-  coreClrDllPath.append("/");
-  coreClrDllPath.append(coreClrDll);
-
-  if (coreClrDllPath.length() >= PATH_MAX)
-  {
-      fprintf(stderr, "Absolute path to libcoreclr.so too long\n");
-  }
-
-  coreclrLib = dlopen(coreClrDllPath.c_str(), RTLD_NOW | RTLD_LOCAL);
+  coreclrLib = dlopen(clrDLLPath, RTLD_NOW | RTLD_LOCAL);
   if (coreclrLib != nullptr)
   {
       initialize_core_clr = (coreclr_initialize_ptr)dlsym(coreclrLib, "coreclr_initialize");

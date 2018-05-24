@@ -28,7 +28,7 @@ int initializeCoreCLR(const char* exePath,
             const char* mergedPropertyKeys,
             const char* mergedPropertyValues,
             const char* managedAssemblyAbsolutePath,
-            const char* clrFilesAbsolutePath);
+            const char* clrDLLPath);
 int shutdownCoreCLR();
 int executeManagedAssembly(const char*);
             
