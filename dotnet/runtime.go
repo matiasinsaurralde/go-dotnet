@@ -2,7 +2,7 @@ package dotnet
 
 /*
 #cgo CXXFLAGS: -std=c++11 -Wall
-#cgo linux LDFLAGS: -ldl
+#cgo LDFLAGS: -ldl
 #include <stdlib.h>
 #include "runtime.hpp"
 */
@@ -45,6 +45,10 @@ var (
 	darwinSDKPaths = []string{
 		"/usr/local/share/dotnet/shared/Microsoft.NETCore.App",
 		"$HOME/.dotnet/shared/Microsoft.NETCore.App",
+	}
+
+	windowsSDKPaths = []string{
+		"C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App",
 	}
 )
 
@@ -166,6 +170,8 @@ func locateSDK() (sdkDirectories []string) {
 		break
 	case "linux":
 		basePaths = linuxSDKPaths
+	case "windows":
+		basePaths = windowsSDKPaths
 	}
 	// Replace HOME env var from base paths:
 	homeEnv := os.Getenv("HOME")
