@@ -2,7 +2,7 @@
 
 [![GoDoc](https://godoc.org/github.com/matiasinsaurralde/go-dotnet?status.svg)](https://godoc.org/github.com/matiasinsaurralde/go-dotnet)
 [![MIT License][license-image]][license-url]
-[![Build status][master-build-image]][master-build-status]
+[![Build status][travis-build-image]][travis-build-status]
 
 This is a PoC Go wrapper for the .NET Core Runtime, this project uses ```cgo``` and has been tested under OSX. It covers two basic use cases provided by the [CLR Hosting API](https://blogs.msdn.microsoft.com/msdnforum/2010/07/09/use-clr4-hosting-api-to-invoke-net-assembly-from-native-c/):
 
@@ -128,9 +128,13 @@ I'm open to PRs, Go/.NET swag, suggestions, etc.
 Build Status
 ------------
 
-Linux x64 / Go 1.9 / .NET Core 2.0
+Linux x64 / Go 1.9/1.10 / .NET Core 1.0/2.0 - OS X / Go 1.9/1.10 - .NET Core 1.0/2.0
 
-[![wercker status](https://app.wercker.com/status/a54ca1ccc44008eeff3c0772e63119bf/s/master "wercker status")](https://app.wercker.com/project/byKey/a54ca1ccc44008eeff3c0772e63119bf)
+[![Linux and OS X build status][travis-build-image]][travis-build-status]
+
+Windows / Go 1.9 / .NET Core 2.x
+
+[![Windows build status][windows-build-image]][windows-build-status]
 
 ## License
 
@@ -142,6 +146,8 @@ Linux x64 / Go 1.9 / .NET Core 2.0
 
 [capture]: capture.png
 
-[master-build-image]: https://app.wercker.com/status/a54ca1ccc44008eeff3c0772e63119bf/s/master
+[travis-build-image]: https://travis-ci.org/matiasinsaurralde/go-dotnet.svg?branch=master
+[travis-build-status]: https://travis-ci.org/matiasinsaurralde/go-dotnet
 
-[master-build-status]: https://app.wercker.com/project/byKey/a54ca1ccc44008eeff3c0772e63119bf
+[windows-build-image]: https://ci.appveyor.com/api/projects/status/wc6hi7h89c6f83it/branch/windows-support?svg=true
+[windows-build-status]: https://ci.appveyor.com/project/matiasinsaurralde/go-dotnet/branch/windows-support
