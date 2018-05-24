@@ -1,7 +1,6 @@
 package dotnet
 
 import (
-	"fmt"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -13,7 +12,6 @@ var (
 )
 
 func init() {
-	fmt.Println("init")
 	_, filename, _, _ := runtime.Caller(0)
 	packagePath = filepath.Dir(filename)
 	assemblyPath = filepath.Join(packagePath, "testfiles")
