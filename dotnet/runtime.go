@@ -33,7 +33,7 @@ const (
 	CoreLibraries = "CORE_LIBRARIES"
 
 	// AppPaths is a property.
-	AppPaths = "AppPaths"
+	AppPaths = "APP_PATHS"
 
 	// NativeDLLSearchDirectories is a property.
 	NativeDLLSearchDirectories = "NATIVE_DLL_SEARCH_DIRECTORIES"
@@ -121,6 +121,8 @@ func Init() (err error) {
 	if runtimeInstance.Params.Properties[NativeDLLSearchDirectories] == "" {
 		nativeDLLSearchDirs = append(nativeDLLSearchDirs, executableFolder)
 	}
+
+	nativeDLLSearchDirs = append(nativeDLLSearchDirs, runtimeInstance.Params.Properties[AppPaths])
 
 	var clrFilesAbsolutePath, clrDLLPath string
 	// clrCommonPaths holds possible SDK locations
